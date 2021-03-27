@@ -58,10 +58,10 @@
             let goodsHtml = '';
 
 
-            /*  this.goods.forEach(({ title, price }) => {
-                 const good = new GoodsItem(title, price);
-                 goodsHtml += good.render();
-             }); */
+            this.goods.forEach(({ title, price }) => {
+                const good = new GoodsItem(title, price);
+                goodsHtml += good.render();
+            });
             document.querySelector(selector).innerHTML = `<ul>${goodsHtml}</ul>`;
         }
     }
