@@ -12,85 +12,107 @@
         <button class="cart-button" type="button">Корзина</button>
     </header>
     <main>
-        <div class="goods-list"></div>
+        <div class="products-list"></div>
     </main>
 </body>
 
 <script>
+
+
+
+
+    class Item {
+        constructor(price) {
+            this.price = price;
+        }
+
+        get actualPrice() {
+            return this.price - (this.price * this.disc);
+        }
+    }
+
+
+
+
     class Goodslist {
         constructor() {
             this.goods = [];
         }
-
-        goodsSum() {
-            let sum = 0;
-            this.goods.forEach(item => {
-                sum += item.price;
-            });
-            return sum;
-        }
         fetchGoods() {
-            this.goods = [
-                { title: 'Shirt', price: 150 },
-                { title: 'Socks', price: 50 },
-                { title: 'Jacket', price: 350 },
-                { title: 'Shoes', price: 250 },
-            ];
-        }
+            const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-        render() {
-            let listHtml = '';
-            this.goods.forEach(good => {
-                const goodItem = new GoodsItem(good.title, good.price);
-                listHtml += goodItem.render();
-            });
-            document.querySelector('.goods-list').innerHTML = listHtml;
-        }
+            let goodfetch = fetch(`${API}/catalogData.json`).then((response) => response.json()).then(data => {
+                this.goods = data;
+            }).catch(error => { console.log(error) });
 
+
+
+            /*   this.goods = [
+                  { title: 'Shirt', price: 150 },
+                  { title: 'Socks', price: 50 },
+                  { title: 'Jacket', price: 350 },
+                  { title: 'Shoes', price: 250 },
+              ]; */
+        }
+        render(selector) {
+            let goodsHtml = '';
+
+
+            /*  this.goods.forEach(({ title, price }) => {
+                 const good = new GoodsItem(title, price);
+                 goodsHtml += good.render();
+             }); */
+            document.querySelector(selector).innerHTML = `<ul>${goodsHtml}</ul>`;
+        }
     }
     class GoodsItem {
-        constructor(price, title) {
+        constructor(name, price, img = "https://placehold.it/200x150") {
+            this.name = name;
             this.price = price;
-            this.title = title;
         }
+
         render() {
-            return `<div class="goods-item"><h3>${this.title}</h3><p>${this.price}</p></div>`;
+            return `<li>  <img src="${this.img}" alt="Some img">  
+                ${this.name}: $${this.price}</li>
+            `;
         }
 
     }
 
-    const goods = [
-        { title: 'Shirt', price: 150, },
-        { title: 'Socks', price: 50 },
-        { title: 'Jacket', price: 350 },
-        { title: 'Shoes', price: 250 },
-    ];
+    class Cart {
+        constructor() {
+            this.items = [];
+        }
+        push(cartItem) {
+            this.items.push();
+        }
+        delete(id) {
+            delete arr[id];
+        }
 
-    let goodlist = new Goodslist;
-    goodlist.fetchGoods();
-    goodlist.render();
-
-    const renderGoodsItem = (title = 'product', price = '0') => {
-        return `<div class="goods-item">
-            <img src="http://placehold.it/200x200"  >
-            <h3>${title}</h3><p>${price}</p>
-            <button>добавить</button>
-            </div>`;
-    };
-
-    const renderGoodsList = (list) => {
-        let goodsList = list.map(item => renderGoodsItem(item.title, item.price));
-        document.querySelector('.goods-list').innerHTML = goodsList.join('');
+    }
+    class CartItem extends Item {
+        constructor(good, disc = 0) {
+            super(good.price, disc);
+            this.good = good;
+        }
     }
 
-    renderGoodsList(goods);
+    const cart = new Cart();
+
+    const addToCard = (good) => cart.push(new CartItem(good));
+
+    window.onload = () => {
+        const goodsList = new Goodslist();
+        console.log(goodsList.fetchGoods());
+        goodsList.render('.products-list');
+
+    }
 
 
 
 
-    // 3. почему map возвращает запятые https://ru.stackoverflow.com/questions/1096455/%D0%9F%D0%BE%D1%87%D0%B5%D0%BC%D1%83-%D0%B2-javascript-%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD%D0%BD%D1%8B%D1%85-%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B0%D1%85-map-%D1%86%D0%B8%D0%BA%D0%BB-%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B0%D0%B5%D1%82%D1%81%D1%8F-%D1%81-%D0%B7%D0%B0%D0%BF%D1%8F%D1%82%D1%8B%D0%BC%D0%B8
 
-    /* Ответ: потому что map возвращает массив, который пропускается через toString, разделяющий элементы массива запятыми */
 
 
 
