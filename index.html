@@ -12,68 +12,105 @@
         <button class="cart-button" type="button">Корзина</button>
     </header>
     <main>
-        <div class="goods-list"></div>
+        <div class="products-list"></div>
     </main>
 </body>
 
 <script>
+
+
+
+
+    class Item {
+        constructor(price) {
+            this.price = price;
+        }
+
+        get actualPrice() {
+            return this.price - (this.price * this.disc);
+        }
+    }
+
+
+
+
     class Goodslist {
         constructor() {
             this.goods = [];
         }
-
-        goodsSum() {
-            let sum = 0;
-            this.goods.forEach(item => {
-                sum += item.price;
-            });
-            return sum;
-        }
         fetchGoods() {
-            this.goods = [
-                { title: 'Shirt', price: 150 },
-                { title: 'Socks', price: 50 },
-                { title: 'Jacket', price: 350 },
-                { title: 'Shoes', price: 250 },
-            ];
-        }
-        addItem() {
+            const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-        }
+            let goodfetch = fetch(`${API}/catalogData.json`).then((response) => response.json()).then(data => {
+                this.goods = data;
+            }).catch(error => { console.log(error) });
 
-        checkout() {
-            // оформление заказа
-        }
 
-        render() {
-            let listHtml = '';
-            this.goods.forEach(good => {
-                const goodItem = new GoodsItem(good.title, good.price);
-                listHtml += goodItem.render();
+
+            /*   this.goods = [
+                  { title: 'Shirt', price: 150 },
+                  { title: 'Socks', price: 50 },
+                  { title: 'Jacket', price: 350 },
+                  { title: 'Shoes', price: 250 },
+              ]; */
+        }
+        render(selector) {
+            let goodsHtml = '';
+
+
+            this.goods.forEach(({ title, price }) => {
+                const good = new GoodsItem(title, price);
+                goodsHtml += good.render();
             });
-            document.querySelector('.goods-list').innerHTML = listHtml;
+            document.querySelector(selector).innerHTML = `<ul>${goodsHtml}</ul>`;
         }
-
     }
     class GoodsItem {
-        constructor(price, title) {
+        constructor(name, price, img = "https://placehold.it/200x150") {
+            this.name = name;
             this.price = price;
-            this.title = title;
         }
-        hasDiscount() {
 
-        }
         render() {
-            return `<div class="goods-item"><h3>${this.title}</h3><p>${this.price}</p></div>`;
+            return `<li>  <img src="${this.img}" alt="Some img">  
+                ${this.name}: $${this.price}</li>
+            `;
         }
+
+    }
+
+    class Cart {
+        constructor() {
+            this.items = [];
+        }
+        push(cartItem) {
+            this.items.push();
+        }
+        delete(id) {
+            delete arr[id];
+        }
+
+    }
+    class CartItem extends Item {
+        constructor(good, disc = 0) {
+            super(good.price, disc);
+            this.good = good;
+        }
+    }
+
+    const cart = new Cart();
+
+    const addToCard = (good) => cart.push(new CartItem(good));
+
+    window.onload = () => {
+        const goodsList = new Goodslist();
+        console.log(goodsList.fetchGoods());
+        goodsList.render('.products-list');
 
     }
 
 
 
-    let goodlist = new Goodslist;
-    goodlist.fetchGoods();
-    goodlist.render();
 
 
 
